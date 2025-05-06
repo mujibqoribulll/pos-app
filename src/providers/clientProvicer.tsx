@@ -1,7 +1,8 @@
 'use client';
 
+import { setupInterceptores } from '@/api/axios/interceptor';
 import { persistor, store } from '@/store/store';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -10,6 +11,10 @@ type Props = {
 };
 
 const ClientProvider = ({ children }: Props) => {
+  useEffect(() => {
+    setupInterceptores();
+  }, []);
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
