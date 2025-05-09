@@ -1,8 +1,8 @@
 import axiosInstance from "@/api/axios/axiosInstance"
 import ENDPOINTS from "@/constant/endpoints.contant"
-import { IParams } from "@/types/product"
+import { ParamsType } from "@/types/product"
 
 
-export const getProducts = (params: IParams) => {
+export const getProducts = (params: ParamsType) => {
     return axiosInstance.get(ENDPOINTS.PRODUCT.GET_PRODUCTS, { params })
 }

@@ -6,9 +6,9 @@ export const middleware = (request: NextRequest) => {
     // const auth = Cookie.get('auth')
     let auth = !!request?.cookies.get('auth')
     console.log('auth', auth)
-    const PUBLIC_ROUTES = ['/login', '/']
+    const PUBLIC_ROUTES = ['/auth/login', '/']
     if (!PUBLIC_ROUTES.includes(pathname) && !auth) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.redirect(new URL('/auth/login', request.url))
     }
     if (auth && PUBLIC_ROUTES.includes(pathname)) {
         return NextResponse.redirect(new URL("/home", request.url));
