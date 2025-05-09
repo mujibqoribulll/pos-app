@@ -2,7 +2,10 @@ import { LoadingTypeProps } from "./auth";
 
 type ParamsType = {
     page: number | string
-    pagination: boolean;
+    paginate?: boolean;
+    sorrBy: string;
+    limit: number;
+    keyword: string;
 }
 
 interface IParams {
@@ -27,4 +30,10 @@ interface PaginationType {
 interface IProduct {
     product: ProductType;
     pagination: PaginationType;
+}
+
+interface ISidebar {
+    onPress: () => void;
+    isMinimize: boolean;
+    onPressLogout: () => void;
 }
