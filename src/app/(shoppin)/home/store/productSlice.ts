@@ -34,7 +34,7 @@ const productSlice = createSlice({
             state.product.loading = 'pending'
         });
         builder.addCase(getProductThunk.fulfilled, (state, action) => {
-            console.log('action', action)
+
             if (action?.payload?.meta?.success) {
                 let { payload } = action
                 state.product.loading = 'succeeded';

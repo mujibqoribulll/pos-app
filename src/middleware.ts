@@ -5,7 +5,7 @@ export const middleware = (request: NextRequest) => {
     const { pathname } = request.nextUrl
     // const auth = Cookie.get('auth')
     let auth = !!request?.cookies.get('auth')
-    console.log('auth', auth)
+
     const PUBLIC_ROUTES = ['/auth/login', '/']
     if (!PUBLIC_ROUTES.includes(pathname) && !auth) {
         return NextResponse.redirect(new URL('/auth/login', request.url))

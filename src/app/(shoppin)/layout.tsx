@@ -13,6 +13,7 @@ export default function RootLayout({
 }>) {
   const [isMinimize, setIsMinimize] = useState(false);
   const dispatch = useAppDispatch();
+
   const route = useRouter();
   const handleMinimize = () => {
     setIsMinimize((prevState) => !prevState);
