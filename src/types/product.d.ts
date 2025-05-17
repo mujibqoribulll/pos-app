@@ -37,3 +37,14 @@ interface ISidebar {
     isMinimize: boolean;
     onPressLogout: () => void;
 }
+
+
+interface IProductStateProps {
+    name: string;
+    description: string;
+    sellingPrice: number;
+    purchasePrice: number;
+    variants: string[];
+    productImage: {},
+    stock: number,
+}
