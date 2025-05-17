@@ -1,9 +1,13 @@
 'use client';
 import ButtonText from '@/components/buttons/button-text';
+import ModalForm from '@/components/modals/modal-form';
+import { schemaProduct } from '@/schemas/schemaProduct';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { ParamsType } from '@/types/product';
+import { IProductStateProps, ParamsType } from '@/types/product';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { CiSearch } from 'react-icons/ci';
 import { GiShoppingCart } from 'react-icons/gi';
 import { shallowEqual } from 'react-redux';
@@ -18,6 +22,13 @@ const HomePage = () => {
   const { pagination, product } = products;
   const page = Number(searchParams.get('page')) || 1;
   const keyword = searchParams.get('keyword') || '';
+
+  const [imagePreview, setImagePreview] = useState<string | null>('');
+  const [modal, setModal] = useState<IModalDataProps>({
+    type: '',
+    visible: false,
+    data: {},
+  });
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -58,6 +69,42 @@ const HomePage = () => {
     fetchData();
   }, [page, keyword]);
 
+  const onPressModal = (type: string, data: IModalDataProps) => {
+    setModal((prevState) => ({
+      ...prevState,
+      type: type,
+      visible: !prevState.visible,
+      data: data,
+    }));
+  };
+
+  const onCancelPresModal = () => {
+    setModal((prevState) => ({
+      ...prevState,
+      type: '',
+      visible: !prevState.visible,
+      data: {},
+    }));
+  };
+
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors, isLoading },
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(schemaProduct),
+  });
+
+  const handleChangeImage = (file: any) => {
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const onSubmit = (data: IProductStateProps[]) => {
+    console.log('data', data);
+  };
+
   return (
     <section className="">
       <div className="flex flex-1 flex-col gap-3 bg-gray-200 h-screen">
@@ -86,7 +133,10 @@ const HomePage = () => {
                 />
               </div>
               <div>
-                <ButtonText title="Add Product" />
+                <ButtonText
+                  title="Add Product"
+                  onPress={() => onPressModal('add-product')}
+                />
               </div>
             </div>
           </div>
@@ -151,6 +201,18 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+      <ModalForm
+        visible={modal.visible}
+        data={modal?.data}
+        onCancel={onCancelPresModal}
+        imagePreview={imagePreview}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+        onSubmit={onSubmit}
+        control={control}
+        handleChangeImage={handleChangeImage}
+      />
     </section>
   );
 };

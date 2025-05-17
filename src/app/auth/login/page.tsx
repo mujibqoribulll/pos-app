@@ -1,29 +1,32 @@
 'use client';
-import { AUTH_STATE } from '@/constant/auth.constant';
 import { useAppDispatch } from '@/store/hooks';
 import { useRouter } from 'next/navigation';
 
+import { schemaLogin } from '@/schemas/schemaLogin';
 import { IAuthInitialState } from '@/types/auth';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 import { BsApple } from 'react-icons/bs';
 import { FaFacebook, FaGooglePlusG } from 'react-icons/fa';
 import { TfiWorld } from 'react-icons/tfi';
 import { postLoginThunk } from './store/authThunk';
 
 const LoginPage = () => {
-  const [initialState, setInitialState] = useState({ ...AUTH_STATE });
   const dispatch = useAppDispatch();
   const route = useRouter();
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setInitialState((prevState) => ({ ...prevState, [name]: value }));
-  };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isLoading },
+  } = useForm({
+    resolver: yupResolver(schemaLogin),
+  });
+
+  const onSubmit = async (data: IAuthInitialState) => {
     let payload: IAuthInitialState = {
-      email: initialState?.email,
-      password: initialState?.password,
+      email: data?.email,
+      password: data?.password,
     };
 
     let result = await dispatch(postLoginThunk(payload));
@@ -63,39 +66,59 @@ const LoginPage = () => {
           <span className="text-sm text-neutral-400 font-sans">or</span>
           <div className="flex-1 border-t border-neutral-400" />
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-y-8">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-y-8"
+        >
           <div>
             <label htmlFor="email" className="flex flex-col">
               <span className="font-sans text-lg text-black">Email adress</span>
               <input
                 type="email"
+                {...register('email')}
                 id="email"
-                defaultValue={initialState?.email}
-                onChange={handleChange}
                 name="email"
                 placeholder="Enter your email"
-                className="border-neutral-400 border placeholder:text-neutral-400 font-sans text-base outline-none p-2 text-black rounded-lg"
+                className={`${
+                  errors?.email?.message
+                    ? 'border-red-500'
+                    : 'border-neutral-400'
+                } border placeholder:text-neutral-400 font-sans text-base outline-none p-2 text-black rounded-lg`}
               />
+              {errors?.email?.message && (
+                <p className="text-sm text-red-500 font-sans">
+                  {errors?.email?.message}
+                </p>
+              )}
             </label>
             <label htmlFor="password" className="flex flex-col">
               <span className="font-sans text-lg text-black">Password</span>
               <input
                 type="password"
                 id="password"
-                defaultValue={initialState?.password}
-                onChange={handleChange}
+                {...register('password')}
                 name="password"
                 placeholder="Enter your password"
-                className="border-neutral-400 border placeholder:text-neutral-400 font-sans text-base outline-none p-2 text-black rounded-lg"
+                className={`${
+                  errors?.password?.message
+                    ? 'border-red-500'
+                    : 'border-neutral-400'
+                } border placeholder:text-neutral-400 font-sans text-base outline-none p-2 text-black rounded-lg`}
               />
+              {errors?.password?.message && (
+                <p className="text-sm text-red-500 font-sans">
+                  {errors?.password?.message}
+                </p>
+              )}
             </label>
           </div>
           <div className="flex">
             <button
               type="submit"
-              className=" shadow-lg flex-1 p-2 rounded-lg bg-gradient-to-t from-gray-700 to-gray-400 font-sans hover:to-gray-500"
+              className="shadow-lg flex-1 p-2 rounded-lg bg-gradient-to-t from-gray-700 to-gray-400 font-sans hover:to-gray-500"
+              disabled={!isValid}
             >
-              Sign in
+              {isLoading ? 'Authenticating' : 'Sign in'}
             </button>
           </div>
         </form>
