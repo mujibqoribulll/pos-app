@@ -1,8 +1,16 @@
 import axiosInstance from "@/api/axios/axiosInstance"
 import ENDPOINTS from "@/constant/endpoints.contant"
-import { ParamsType } from "@/types/product"
+import { IProductStateProps, ParamsType } from "@/types/product"
 
 
 export const getProducts = (params: ParamsType) => {
     return axiosInstance.get(ENDPOINTS.PRODUCT.GET_PRODUCTS, { params })
+}
+
+export const addProduct = (data: IProductStateProps) => {
+    return axiosInstance.post(ENDPOINTS.PRODUCT.ADD_PRODUCT, data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
 }

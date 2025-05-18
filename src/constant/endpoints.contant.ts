@@ -3,7 +3,8 @@ const ENDPOINTS = {
         LOGIN: '/v1/auth/login'
     },
     PRODUCT: {
-        GET_PRODUCTS: '/v1/warehouse/product'
+        GET_PRODUCTS: '/v1/warehouse/product',
+        ADD_PRODUCT: '/v1/product',
     }
 }
 

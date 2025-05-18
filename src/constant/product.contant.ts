@@ -1,3 +1,5 @@
+import { ProductType } from "@/types/product";
+
 export const initialState = {
     name: '',
     description: '',
@@ -7,3 +9,9 @@ export const initialState = {
     variants: [],
     productImage: {}
 }
+
+export const initialStateUseService: ProductType = {
+    loading: 'idle',
+    message: '',
+    data: {},
+};

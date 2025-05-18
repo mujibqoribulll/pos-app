@@ -1,108 +1,42 @@
 'use client';
 import ButtonText from '@/components/buttons/button-text';
 import ModalForm from '@/components/modals/modal-form';
-import { schemaProduct } from '@/schemas/schemaProduct';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { IProductStateProps, ParamsType } from '@/types/product';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { IProductStateProps } from '@/types/product';
+import { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import { GiShoppingCart } from 'react-icons/gi';
-import { shallowEqual } from 'react-redux';
-import { getProductThunk } from './store/productThunk';
+import { useHooksProduct } from './store/useHooksProduct';
 
 const HomePage = () => {
-  const dispatch = useAppDispatch();
-  const route = useRouter();
-  const [search, setSearch] = useState<string>('');
-  const searchParams = useSearchParams();
-  const products = useAppSelector((state) => state.product, shallowEqual);
-  const { pagination, product } = products;
-  const page = Number(searchParams.get('page')) || 1;
-  const keyword = searchParams.get('keyword') || '';
+  const {
+    state: stateProduct,
+    modal: modalProduct,
+    pagination,
+    product,
+    formState: { errors, isLoading },
+    control,
+    func: {
+      submitForm,
+      toggleSetModal,
+      handleNext,
+      handlePrev,
+      register,
+      handleSubmit,
+    },
+  } = useHooksProduct();
 
   const [imagePreview, setImagePreview] = useState<string | null>('');
-  const [modal, setModal] = useState<IModalDataProps>({
-    type: '',
-    visible: false,
-    data: {},
-  });
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      const query = new URLSearchParams();
-
-      if (search) query.set('keyword', search);
-      query.set('page', '1');
-      route.push(`?${query.toString()}`);
-    }, 700);
-
-    return () => clearTimeout(delay);
-  }, [search]);
-
-  const handleNext = () => {
-    if (pagination?.next_page) {
-      route.push(`?page=${pagination?.next_page}&keyword=${keyword}`);
-    }
-  };
-
-  const handlePrev = () => {
-    if (pagination?.prev_page) {
-      route.push(`?page=${pagination?.prev_page}&keyword=${keyword}`);
-    }
-  };
-
-  const fetchData = () => {
-    let params: ParamsType = {
-      paginate: true,
-      page,
-      sorrBy: 'stock-asc',
-      limit: 20,
-      keyword,
-    };
-    dispatch(getProductThunk(params));
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [page, keyword]);
 
   const onPressModal = (type: string, data: IModalDataProps) => {
-    setModal((prevState) => ({
-      ...prevState,
-      type: type,
-      visible: !prevState.visible,
-      data: data,
-    }));
+    toggleSetModal(type, data);
   };
-
-  const onCancelPresModal = () => {
-    setModal((prevState) => ({
-      ...prevState,
-      type: '',
-      visible: !prevState.visible,
-      data: {},
-    }));
-  };
-
-  const {
-    handleSubmit,
-    register,
-    control,
-    formState: { errors, isLoading },
-  } = useForm({
-    mode: 'onChange',
-    resolver: yupResolver(schemaProduct),
-  });
 
   const handleChangeImage = (file: any) => {
     setImagePreview(URL.createObjectURL(file));
   };
 
-  const onSubmit = (data: IProductStateProps[]) => {
-    console.log('data', data);
+  const onSubmit = (data: IProductStateProps) => {
+    submitForm(data);
   };
 
   return (
@@ -124,12 +58,12 @@ const HomePage = () => {
               <div className="flex items-center gap-3 border border-black/25 p-[5px] bg-white rounded-lg">
                 <CiSearch size={20} />
                 <input
+                  {...register('search')}
                   name="search"
                   type="search"
                   placeholder="Search"
                   className="outline-none"
                   id="search"
-                  onChange={(text) => setSearch(text.target.value)}
                 />
               </div>
               <div>
@@ -202,9 +136,9 @@ const HomePage = () => {
         </div>
       </div>
       <ModalForm
-        visible={modal.visible}
-        data={modal?.data}
-        onCancel={onCancelPresModal}
+        visible={modalProduct.visible}
+        data={modalProduct?.data}
+        onCancel={() => onPressModal('', {})}
         imagePreview={imagePreview}
         handleSubmit={handleSubmit}
         register={register}
@@ -212,6 +146,7 @@ const HomePage = () => {
         onSubmit={onSubmit}
         control={control}
         handleChangeImage={handleChangeImage}
+        state={stateProduct}
       />
     </section>
   );

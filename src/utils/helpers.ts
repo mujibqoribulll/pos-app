@@ -1,3 +1,5 @@
+import { ProductType, ResetStatusHook } from "@/types/product";
+
 export const setErrorMessage = (action: any) => {
     if (typeof action === 'string') return action;
     let error = action?.paylaod || action;
@@ -10,4 +12,28 @@ export const setErrorMessage = (action: any) => {
         'Server Sedang Mengalami Gangguan';
 
     return message;
+};
+
+
+export const resetStatusHook = (
+    initialState: ProductType,
+    state: ProductType,
+    key: ResetStatusHook,
+) => {
+    let stateNew = { ...state };
+    switch (key) {
+        case 'loading':
+            stateNew.loading = 'idle';
+            stateNew.message = '';
+            break;
+        case 'data':
+            stateNew.data = {};
+            break;
+        case 'all':
+            stateNew = initialState;
+            break;
+        default:
+            break;
+    }
+    return stateNew;
 };
