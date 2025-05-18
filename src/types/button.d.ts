@@ -22,4 +22,5 @@ interface IButtonText {
     type: ButtonType;
     styleContainer?: string;
     styleText?: string;
+    loading?: boolean;
 }

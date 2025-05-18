@@ -1,5 +1,7 @@
 import { LoadingTypeProps } from "./auth";
 
+export type ResetStatusHook = "loading" | "data" | "all" | undefined;
+
 type ParamsType = {
     page: number | string
     paginate?: boolean;
@@ -16,6 +18,8 @@ interface ProductType {
     loading: LoadingTypeProps,
     data: any;
     message: string;
+    pagination?: paginationType;
+    [key?: string]: any;
 }
 
 interface PaginationType {
@@ -44,7 +48,9 @@ interface IProductStateProps {
     description: string;
     sellingPrice: number;
     purchasePrice: number;
-    variants: string[];
-    productImage: {},
+    variants?: string[];
+    productImage: File,
     stock: number,
 }
+
+type ResetStatusHook = "loading" | "data" | "all" | undefined;

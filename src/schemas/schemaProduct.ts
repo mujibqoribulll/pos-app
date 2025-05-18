@@ -35,9 +35,10 @@ export const schemaProduct = yup.object({
         ),
     // variants: yup.array().of(yup.string().required("Variant is required")),
     productImage: yup.mixed().required('Image file is required').test('fileType', 'Unsupported File Format', (value: any) => {
-        return value[0] && value[0]?.type && value[0]?.type.startsWith('image/');
+        return value && value?.type && value?.type.startsWith('image/');
     }).test('fileSize', 'File size is too large', (value: any) => {
-        return value[0] && value[0]?.size <= 5 * 1024 * 1024; // Maksimal 5MB
+        return value && value?.size <= 5 * 1024 * 1024; // Maksimal 5MB
     }),
     stock: yup.number().required(),
+    search: yup.string().nullable(),
 })

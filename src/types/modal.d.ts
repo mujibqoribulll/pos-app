@@ -18,5 +18,5 @@ interface IModalFormProps {
 interface IModalDataProps {
     type: string;
     visible: boolean;
-    data: Datatypes;
+    data?: Datatypes;
 }
