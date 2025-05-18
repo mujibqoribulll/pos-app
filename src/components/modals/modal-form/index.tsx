@@ -18,6 +18,7 @@ const ModalForm = (props: IModalFormProps) => {
     onSubmit,
     control,
     handleChangeImage,
+    state,
   } = props;
 
   if (!visible) {
@@ -33,7 +34,7 @@ const ModalForm = (props: IModalFormProps) => {
       onClick={onCancel}
     >
       <div
-        className="bg-white min-w-md rounded-lg"
+        className="bg-white min-w-lg rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4">
@@ -66,7 +67,7 @@ const ModalForm = (props: IModalFormProps) => {
                       if (file) {
                         handleChangeImage(file);
                       }
-                      field.onChange(e.target.files); // ← penting untuk validasi!
+                      field.onChange(e.target.files?.[0]); // ← penting untuk validasi!
                     }}
                     className={`w-52 border border-dashed cursor-pointer  border-black/30 p-2 rounded-lg placeholder:text-gray-300 text-gray-700 font-sans text-base`}
                   />
@@ -213,7 +214,12 @@ const ModalForm = (props: IModalFormProps) => {
                 styleContainer="bg-transparent outline-black/70 outline-1"
                 styleText="text-black/70"
               />
-              <ButtonText type="submit" title="Submit" onPress={onPress} />
+              <ButtonText
+                type="submit"
+                title="Submit"
+                onPress={onPress}
+                loading={state.loading === 'pending'}
+              />
             </div>
           </form>
         </div>

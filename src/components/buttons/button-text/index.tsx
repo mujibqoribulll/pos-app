@@ -8,6 +8,7 @@ const ButtonText = (props: IButtonText) => {
     type = 'button',
     styleContainer,
     styleText,
+    loading = false,
   } = props;
 
   return (
@@ -21,7 +22,14 @@ const ButtonText = (props: IButtonText) => {
       }`}
       onClick={onPress}
     >
-      <span className={`${styleText ? styleText : 'text-white'}  `}>
+      <span
+        className={`${
+          styleText ? styleText : 'text-white'
+        }  flex justify-center items-center gap-3`}
+      >
+        {loading && (
+          <div className="w-5 h-5 border-3 border-x-white/40 rounded-full animate-spin" />
+        )}
         {title}
       </span>
     </button>
