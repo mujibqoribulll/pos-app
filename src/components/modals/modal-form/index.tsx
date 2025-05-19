@@ -63,7 +63,6 @@ const ModalForm = (props: IModalFormProps) => {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      console.log('file', file);
                       if (file) {
                         handleChangeImage(file);
                       }
