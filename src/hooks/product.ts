@@ -8,3 +8,9 @@ export const usePostProduct = () => {
 
     return { state, postProductService: (data: IProductStateProps) => service(() => PRODUCT.addProduct(data)), reset }
 }
+
+export const useDeleteProduct = () => {
+    const { state, service, reset } = useSendService()
+
+    return { state, deleteProduct: (id: string) => service(() => PRODUCT.deleteProduct(id)), reset }
+}

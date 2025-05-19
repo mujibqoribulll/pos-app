@@ -14,3 +14,7 @@ export const addProduct = (data: IProductStateProps) => {
         }
     })
 }
+
+export const deleteProduct = (id: string) => {
+    return axiosInstance.delete(ENDPOINTS.PRODUCT.DELETE_PRODUCT.replace(':id', id))
+}

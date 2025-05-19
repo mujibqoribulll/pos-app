@@ -5,6 +5,7 @@ const ENDPOINTS = {
     PRODUCT: {
         GET_PRODUCTS: '/v1/warehouse/product',
         ADD_PRODUCT: '/v1/product',
+        DELETE_PRODUCT: '/v1/product/:id'
     }
 }
 
