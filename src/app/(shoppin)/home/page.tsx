@@ -1,10 +1,12 @@
 'use client';
 import ButtonText from '@/components/buttons/button-text';
+import ModalAlert from '@/components/modals/modal-alert';
 import ModalForm from '@/components/modals/modal-form';
 import { IProductStateProps } from '@/types/product';
 import { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import { GiShoppingCart } from 'react-icons/gi';
+import { LuEllipsisVertical } from 'react-icons/lu';
 import { useHooksProduct } from './store/useHooksProduct';
 
 const HomePage = () => {
@@ -15,6 +17,8 @@ const HomePage = () => {
     product,
     formState: { errors, isLoading },
     control,
+    isOpenModalAlert,
+    isDropdown,
     func: {
       submitForm,
       toggleSetModal,
@@ -22,6 +26,9 @@ const HomePage = () => {
       handlePrev,
       register,
       handleSubmit,
+      setIsDropdown,
+      setIsOpenModalAlert,
+      handleDelete,
     },
   } = useHooksProduct();
 
@@ -37,6 +44,10 @@ const HomePage = () => {
 
   const onSubmit = (data: IProductStateProps) => {
     submitForm(data);
+  };
+
+  const toggleDropdown = ({ id }: IDropdown) => {
+    setIsDropdown({ id });
   };
 
   return (
@@ -92,6 +103,7 @@ const HomePage = () => {
                     <th className="p-3">Quantity</th>
                     <th className="p-3">Purchase price</th>
                     <th className="p-3">Sell price</th>
+                    <th className="p-3">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y-1 divide-gray-200">
@@ -111,6 +123,35 @@ const HomePage = () => {
                         <td className="p-3">{product?.stock || '-'}</td>
                         <td className="p-3">{product?.purchasePrice}</td>
                         <td className="p-3">{product?.sellingPrice}</td>
+                        <td className=" place-items-center">
+                          <div
+                            className="relative p-3"
+                            onMouseEnter={() =>
+                              toggleDropdown({ id: product?.id })
+                            }
+                            // onMouseLeave={() => toggleDropdown({ id: '' })}
+                          >
+                            <LuEllipsisVertical className="cursor-pointer" />
+
+                            <div
+                              className={`absolute ${
+                                isDropdown?.id === product?.id
+                                  ? 'flex flex-col'
+                                  : 'hidden'
+                              }  gap-x-2 -left-24 top-3  bg-neutral-700 w-24 rounded-lg p-2`}
+                            >
+                              <div className="text-sm font-sans  text-white p-[5px] hover:bg-green-500 rounded-md cursor-pointer">
+                                Update
+                              </div>
+                              <div
+                                className="text-sm font-sans  text-white hover:bg-red-500  p-[5px] rounded-md cursor-pointer"
+                                onMouseDown={() => setIsOpenModalAlert(true)}
+                              >
+                                Delete
+                              </div>
+                            </div>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -147,6 +188,11 @@ const HomePage = () => {
         control={control}
         handleChangeImage={handleChangeImage}
         state={stateProduct}
+      />
+      <ModalAlert
+        visible={isOpenModalAlert}
+        onCancel={() => setIsOpenModalAlert(false)}
+        onPress={handleDelete}
       />
     </section>
   );

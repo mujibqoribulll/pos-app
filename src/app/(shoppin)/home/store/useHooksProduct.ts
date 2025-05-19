@@ -1,4 +1,4 @@
-import { usePostProduct } from "@/hooks/product";
+import { useDeleteProduct, usePostProduct } from "@/hooks/product";
 import { schemaProduct } from "@/schemas/schemaProduct";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { IProductStateProps, ParamsType } from "@/types/product";
@@ -13,6 +13,7 @@ import { getProductThunk } from "./productThunk";
 
 export const useHooksProduct = () => {
     const { state, postProductService } = usePostProduct();
+    const { state: stateDeleteProduct, deleteProduct } = useDeleteProduct()
     const products = useAppSelector((state) => state.product, shallowEqual);
     const dispatch = useAppDispatch()
     const searchParams = useSearchParams();
@@ -40,6 +41,11 @@ export const useHooksProduct = () => {
         visible: false,
         data: {},
     });
+    const [isDropdown, setIsDropdown] = useState<IDropdown>({
+        id: ''
+    })
+    const [isOpenModalAlert, setIsOpenModalAlert] = useState<boolean>(false)
+
 
     const toggleSetModal = (type: string, data: IModalDataProps) => {
         setModal((prevState) => ({
@@ -48,6 +54,16 @@ export const useHooksProduct = () => {
             visible: !prevState.visible,
             data: data,
         }));
+    }
+
+    const handleDelete = async () => {
+        if (isDropdown?.id) {
+            let result = await deleteProduct(isDropdown?.id)
+            if (result?.meta?.success) {
+                fetchData();
+                setIsOpenModalAlert(false)
+            }
+        }
     }
 
     const fetchData = () => {
@@ -109,7 +125,6 @@ export const useHooksProduct = () => {
         formData.append('stock', stock.toString());
         let result = await postProductService(formData);
         if (result?.meta?.success) {
-
             setModal((prevState) => ({
                 ...prevState,
                 type: 'add-product',
@@ -124,5 +139,5 @@ export const useHooksProduct = () => {
 
 
 
-    return { state, modal, pagination, control, product, formState: { errors, isLoading }, func: { postProductService, submitForm, toggleSetModal, fetchData, handleNext, handlePrev, handleSubmit, register } }
+    return { state, isOpenModalAlert, modal, pagination, control, product, isDropdown, formState: { errors, isLoading }, func: { postProductService, submitForm, toggleSetModal, fetchData, handleNext, handlePrev, handleSubmit, register, setIsDropdown, setIsOpenModalAlert, handleDelete } }
 }

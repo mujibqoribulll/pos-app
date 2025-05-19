@@ -15,7 +15,6 @@ export const useSendService = () => {
         try {
             setState(prev => ({ ...prev, loading: 'pending' }));
             const { data: result } = await repository();
-            console.log('result1', result)
             if (result?.meta?.success) {
                 setState(prev => ({
                     ...prev,

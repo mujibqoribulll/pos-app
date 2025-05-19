@@ -20,3 +20,18 @@ interface IModalDataProps {
     visible: boolean;
     data?: Datatypes;
 }
+
+// Dropdowm
+
+type TypeDropdown = 'delete' | 'update' | undefined
+
+interface IDropdown {
+    id: string;
+}
+
+
+interface IModalAlertProps {
+    onPress: () => void;
+    onCancel: () => void;
+    visible: boolean;
+}
