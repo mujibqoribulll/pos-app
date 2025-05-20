@@ -42,6 +42,7 @@ export const useHooksProduct = () => {
         data: {},
     });
     const [isDropdown, setIsDropdown] = useState<IDropdown>({
+        active: false,
         id: ''
     })
     const [isOpenModalAlert, setIsOpenModalAlert] = useState<boolean>(false)

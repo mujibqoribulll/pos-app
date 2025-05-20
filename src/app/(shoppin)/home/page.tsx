@@ -46,8 +46,8 @@ const HomePage = () => {
     submitForm(data);
   };
 
-  const toggleDropdown = ({ id }: IDropdown) => {
-    setIsDropdown({ id });
+  const toggleDropdown = ({ active, id }: IDropdown) => {
+    setIsDropdown({ active, id });
   };
 
   return (
@@ -107,54 +107,47 @@ const HomePage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y-1 divide-gray-200">
-                  {product?.loading === 'pending' ? (
-                    <tr>
-                      <td className=" text-center py-2" colSpan={5}>
-                        <span className="text-base font-semibold font-sans">
-                          Loading...
-                        </span>
-                      </td>
-                    </tr>
-                  ) : (
-                    product?.data?.map((product: any, index: number) => (
-                      <tr key={index}>
-                        <td className="p-3">{product?.name || '-'}</td>
-                        <td className="p-3">{product?.description || '-'}</td>
-                        <td className="p-3">{product?.stock || '-'}</td>
-                        <td className="p-3">{product?.purchasePrice}</td>
-                        <td className="p-3">{product?.sellingPrice}</td>
-                        <td className=" place-items-center">
-                          <div
-                            className="relative p-3"
-                            onMouseEnter={() =>
-                              toggleDropdown({ id: product?.id })
-                            }
-                            // onMouseLeave={() => toggleDropdown({ id: '' })}
-                          >
-                            <LuEllipsisVertical className="cursor-pointer" />
+                  {product?.data?.map((product: any, index: number) => (
+                    <tr key={index}>
+                      <td className="p-3">{product?.name || '-'}</td>
+                      <td className="p-3">{product?.description || '-'}</td>
+                      <td className="p-3">{product?.stock || '-'}</td>
+                      <td className="p-3">{product?.purchasePrice}</td>
+                      <td className="p-3">{product?.sellingPrice}</td>
+                      <td className=" place-items-center">
+                        <div
+                          className="relative p-3"
+                          onMouseEnter={() =>
+                            toggleDropdown({ active: true, id: product?.id })
+                          }
+                          onMouseLeave={() =>
+                            toggleDropdown({ active: false, id: product?.id })
+                          }
+                        >
+                          <LuEllipsisVertical className="cursor-pointer" />
 
+                          <div
+                            className={`absolute ${
+                              isDropdown?.id === product?.id &&
+                              isDropdown?.active
+                                ? 'flex flex-col'
+                                : 'hidden'
+                            }  gap-x-2 -left-24 top-3  bg-neutral-700 w-24 rounded-lg p-2`}
+                          >
+                            <div className="text-sm font-sans  text-white p-[5px] hover:bg-green-500 rounded-md cursor-pointer">
+                              Update
+                            </div>
                             <div
-                              className={`absolute ${
-                                isDropdown?.id === product?.id
-                                  ? 'flex flex-col'
-                                  : 'hidden'
-                              }  gap-x-2 -left-24 top-3  bg-neutral-700 w-24 rounded-lg p-2`}
+                              className="text-sm font-sans  text-white hover:bg-red-500  p-[5px] rounded-md cursor-pointer"
+                              onMouseDown={() => setIsOpenModalAlert(true)}
                             >
-                              <div className="text-sm font-sans  text-white p-[5px] hover:bg-green-500 rounded-md cursor-pointer">
-                                Update
-                              </div>
-                              <div
-                                className="text-sm font-sans  text-white hover:bg-red-500  p-[5px] rounded-md cursor-pointer"
-                                onMouseDown={() => setIsOpenModalAlert(true)}
-                              >
-                                Delete
-                              </div>
+                              Delete
                             </div>
                           </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
               <div className="flex justify-end items-center my-3 gap-x-4">

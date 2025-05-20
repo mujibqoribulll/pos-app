@@ -26,6 +26,7 @@ interface IModalDataProps {
 type TypeDropdown = 'delete' | 'update' | undefined
 
 interface IDropdown {
+    active: boolean,
     id: string;
 }
 

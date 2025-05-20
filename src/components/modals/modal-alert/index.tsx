@@ -35,15 +35,18 @@ const ModalAlert = (props: IModalAlertProps) => {
 
           <div className="flex justify-center items-center gap-x-2 ">
             <ButtonText
+              type="button"
               title="Cancel"
               onPress={onCancel}
               styleContainer="border border-gray-500 bg-white"
               styleText="text-black"
             />
             <ButtonText
+              type="button"
               title="Yes"
               onPress={onPress}
-              styleContainer=" bg-red-500"
+              styleContainer="border border-red-500 bg-white"
+              styleText="text-red-500"
             />
           </div>
         </div>
