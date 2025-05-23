@@ -1,8 +1,8 @@
 type Datatypes = {
-    name: string;
-    description: string;
-    image: string
-} | {}
+    id: string | number
+}
+
+type Modaltype = 'add-product' | 'update-product' | undefined | ''
 
 
 type ImageTypes = string | null
@@ -16,7 +16,7 @@ interface IModalFormProps {
 }
 
 interface IModalDataProps {
-    type: string;
+    type: Modaltype;
     visible: boolean;
     data?: Datatypes;
 }

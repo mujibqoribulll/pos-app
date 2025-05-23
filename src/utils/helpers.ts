@@ -37,3 +37,13 @@ export const resetStatusHook = (
     }
     return stateNew;
 };
+
+export const urlToFile = async (url: string, fileName: string): Promise<File> => {
+    const res = await fetch(url);
+    const blob = await res.blob()
+    const contentType = res.headers.get("Content-Type") || "application/octet-stream";
+
+    const name = fileName || "file." + contentType.split("/")[1]; // contoh: file.jpeg
+    return new File([blob], name, { type: contentType });
+
+}
