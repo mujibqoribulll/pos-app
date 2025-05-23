@@ -3,7 +3,6 @@ import ButtonText from '@/components/buttons/button-text';
 import ModalAlert from '@/components/modals/modal-alert';
 import ModalForm from '@/components/modals/modal-form';
 import { IProductStateProps } from '@/types/product';
-import { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import { GiShoppingCart } from 'react-icons/gi';
 import { LuEllipsisVertical } from 'react-icons/lu';
@@ -19,6 +18,7 @@ const HomePage = () => {
     control,
     isOpenModalAlert,
     isDropdown,
+    imagePreview,
     func: {
       submitForm,
       toggleSetModal,
@@ -29,12 +29,11 @@ const HomePage = () => {
       setIsDropdown,
       setIsOpenModalAlert,
       handleDelete,
+      setImagePreview,
     },
   } = useHooksProduct();
 
-  const [imagePreview, setImagePreview] = useState<string | null>('');
-
-  const onPressModal = (type: string, data: IModalDataProps) => {
+  const onPressModal = (type: any, data: Datatypes) => {
     toggleSetModal(type, data);
   };
 
@@ -80,7 +79,8 @@ const HomePage = () => {
               <div>
                 <ButtonText
                   title="Add Product"
-                  onPress={() => onPressModal('add-product')}
+                  onPress={() => onPressModal('add-product', { id: '' })}
+                  type="button"
                 />
               </div>
             </div>
@@ -134,7 +134,14 @@ const HomePage = () => {
                                 : 'hidden'
                             }  gap-x-2 -left-24 top-3  bg-neutral-700 w-24 rounded-lg p-2`}
                           >
-                            <div className="text-sm font-sans  text-white p-[5px] hover:bg-green-500 rounded-md cursor-pointer">
+                            <div
+                              className="text-sm font-sans  text-white p-[5px] hover:bg-green-500 rounded-md cursor-pointer"
+                              onMouseDown={() =>
+                                onPressModal('update-product', {
+                                  id: product?.id,
+                                })
+                              }
+                            >
                               Update
                             </div>
                             <div
@@ -155,6 +162,7 @@ const HomePage = () => {
                   title="Prev"
                   disable={!pagination?.has_prev_page}
                   onPress={handlePrev}
+                  type="button"
                 />
                 <span className="font-sans font-semibold">
                   {pagination?.page}
@@ -163,6 +171,7 @@ const HomePage = () => {
                   title="Next"
                   onPress={handleNext}
                   disable={!pagination?.has_next_page}
+                  type="button"
                 />
               </div>
             </div>
@@ -172,7 +181,7 @@ const HomePage = () => {
       <ModalForm
         visible={modalProduct.visible}
         data={modalProduct?.data}
-        onCancel={() => onPressModal('', {})}
+        onCancel={() => onPressModal('', { id: '' })}
         imagePreview={imagePreview}
         handleSubmit={handleSubmit}
         register={register}

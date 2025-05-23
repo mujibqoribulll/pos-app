@@ -14,3 +14,18 @@ export const useDeleteProduct = () => {
 
     return { state, deleteProduct: (id: string) => service(() => PRODUCT.deleteProduct(id)), reset }
 }
+
+export const useGetDetailProduct = () => {
+    const { state, service, reset } = useSendService()
+
+    return {
+        state, getDetailProduct: (id: string) => service(() => PRODUCT.getDetailProduct(id))
+    }
+}
+
+
+export const usePutProduct = () => {
+    const { state, service, reset } = useSendService()
+
+    return { state, putProduct: (id: string, data: IProductStateProps) => service(() => PRODUCT.updateProduct(id, data)), reset }
+}
