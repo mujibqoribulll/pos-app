@@ -50,7 +50,22 @@ interface IProductStateProps {
     purchasePrice: number;
     // variants?: string[];
     productImage: File,
-    stock: number,
+    description: string;
+    sellingPrice: number;
+    purchasePrice: number;
 }
 
 type ResetStatusHook = "loading" | "data" | "all" | undefined;
+
+interface ICardProduct {
+    image: string;
+    description: string;
+    sellingPrice: number;
+    purchasePrice: number;
+    description: string;
+    sellingPrice: number;
+    purchasePrice: number;
+    stock: number;
+    name: string;
+
+}
