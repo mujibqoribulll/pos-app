@@ -29,14 +29,15 @@ export default function RootLayout({
 
   return (
     <div className="flex flex-row justify-start">
-      <div>
+      <div className="">
         <Sidebar
           onPress={handleMinimize}
           isMinimize={isMinimize}
           onPressLogout={handleLogout}
         />
       </div>
-      <div className="flex flex-1 flex-col">
+
+      <div className="flex flex-1 h-screen overflow-auto flex-col">
         <Navbar />
         {children}
       </div>

@@ -40,7 +40,7 @@ const Sidebar = (props: ISidebar) => {
     <section
       className={`flex flex-col justify-between h-screen ${
         isMinimize ? 'min-w-20' : 'min-w-60'
-      } p-4 bg-gray-200 border-r-2 border-neutral-300 sticky top-0 transition-all duration-1000`}
+      } p-4 bg-gray-200 border-r-2 border-neutral-300  transition-all duration-1000 overflow-y-auto overf scroll-auto`}
     >
       <div className="flex flex-1 flex-col gap-y-10 justify-center">
         <div className="flex justify-between items-center">

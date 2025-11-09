@@ -1,12 +1,11 @@
 'use client';
 import ButtonText from '@/components/buttons/button-text';
+import CardProduct from '@/components/cards/card-product';
 import ModalAlert from '@/components/modals/modal-alert';
 import ModalForm from '@/components/modals/modal-form';
 import { IProductStateProps } from '@/types/product';
-import { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import { GiShoppingCart } from 'react-icons/gi';
-import { LuEllipsisVertical } from 'react-icons/lu';
 import { useHooksProduct } from './store/useHooksProduct';
 
 const HomePage = () => {
@@ -19,6 +18,7 @@ const HomePage = () => {
     control,
     isOpenModalAlert,
     isDropdown,
+    imagePreview,
     func: {
       submitForm,
       toggleSetModal,
@@ -29,12 +29,11 @@ const HomePage = () => {
       setIsDropdown,
       setIsOpenModalAlert,
       handleDelete,
+      setImagePreview,
     },
   } = useHooksProduct();
 
-  const [imagePreview, setImagePreview] = useState<string | null>('');
-
-  const onPressModal = (type: string, data: IModalDataProps) => {
+  const onPressModal = (type: any, data: Datatypes) => {
     toggleSetModal(type, data);
   };
 
@@ -46,13 +45,13 @@ const HomePage = () => {
     submitForm(data);
   };
 
-  const toggleDropdown = ({ id }: IDropdown) => {
-    setIsDropdown({ id });
+  const toggleDropdown = ({ active, id }: IDropdown) => {
+    setIsDropdown({ active, id });
   };
 
   return (
     <section className="">
-      <div className="flex flex-1 flex-col gap-3 bg-gray-200 h-screen">
+      <div className="flex flex-1 flex-col gap-3 bg-gray-200 h-full">
         {/* main content */}
         <div className="px-3 my-6">
           <div className="flex flex-row items-center">
@@ -66,7 +65,7 @@ const HomePage = () => {
               </p>
             </div>
             <div className="flex items-center gap-x-3">
-              <div className="flex items-center gap-3 border border-black/25 p-[5px] bg-white rounded-lg">
+              <div className="flex items-center gap-3 border border-black/25 p-[5px] bg-white rounded-xl">
                 <CiSearch size={20} />
                 <input
                   {...register('search')}
@@ -80,7 +79,8 @@ const HomePage = () => {
               <div>
                 <ButtonText
                   title="Add Product"
-                  onPress={() => onPressModal('add-product')}
+                  onPress={() => onPressModal('add-product', { id: '' })}
+                  type="button"
                 />
               </div>
             </div>
@@ -95,73 +95,28 @@ const HomePage = () => {
             </div>
 
             <div className="my-7">
-              <table className="w-full">
-                <thead className="bg-black/70">
-                  <tr className="text-left text-white">
-                    <th className="p-3">Product</th>
-                    <th className="p-3">Description</th>
-                    <th className="p-3">Quantity</th>
-                    <th className="p-3">Purchase price</th>
-                    <th className="p-3">Sell price</th>
-                    <th className="p-3">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y-1 divide-gray-200">
-                  {product?.loading === 'pending' ? (
-                    <tr>
-                      <td className=" text-center py-2" colSpan={5}>
-                        <span className="text-base font-semibold font-sans">
-                          Loading...
-                        </span>
-                      </td>
-                    </tr>
-                  ) : (
-                    product?.data?.map((product: any, index: number) => (
-                      <tr key={index}>
-                        <td className="p-3">{product?.name || '-'}</td>
-                        <td className="p-3">{product?.description || '-'}</td>
-                        <td className="p-3">{product?.stock || '-'}</td>
-                        <td className="p-3">{product?.purchasePrice}</td>
-                        <td className="p-3">{product?.sellingPrice}</td>
-                        <td className=" place-items-center">
-                          <div
-                            className="relative p-3"
-                            onMouseEnter={() =>
-                              toggleDropdown({ id: product?.id })
-                            }
-                            // onMouseLeave={() => toggleDropdown({ id: '' })}
-                          >
-                            <LuEllipsisVertical className="cursor-pointer" />
+              {/* dummy */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-8 gap-[16px]">
+                {product?.data?.map((product, index) => (
+                  <CardProduct
+                    image={product?.image}
+                    key={index}
+                    description={product?.description}
+                    sellingPrice={product?.sellingPrice}
+                    name={product?.name}
+                    purchasePrice={product?.purchasePrice}
+                    stock={product?.stock}
+                  />
+                ))}
+              </div>
+              {/* dummy */}
 
-                            <div
-                              className={`absolute ${
-                                isDropdown?.id === product?.id
-                                  ? 'flex flex-col'
-                                  : 'hidden'
-                              }  gap-x-2 -left-24 top-3  bg-neutral-700 w-24 rounded-lg p-2`}
-                            >
-                              <div className="text-sm font-sans  text-white p-[5px] hover:bg-green-500 rounded-md cursor-pointer">
-                                Update
-                              </div>
-                              <div
-                                className="text-sm font-sans  text-white hover:bg-red-500  p-[5px] rounded-md cursor-pointer"
-                                onMouseDown={() => setIsOpenModalAlert(true)}
-                              >
-                                Delete
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
               <div className="flex justify-end items-center my-3 gap-x-4">
                 <ButtonText
                   title="Prev"
                   disable={!pagination?.has_prev_page}
                   onPress={handlePrev}
+                  type="button"
                 />
                 <span className="font-sans font-semibold">
                   {pagination?.page}
@@ -170,6 +125,7 @@ const HomePage = () => {
                   title="Next"
                   onPress={handleNext}
                   disable={!pagination?.has_next_page}
+                  type="button"
                 />
               </div>
             </div>
@@ -179,7 +135,7 @@ const HomePage = () => {
       <ModalForm
         visible={modalProduct.visible}
         data={modalProduct?.data}
-        onCancel={() => onPressModal('', {})}
+        onCancel={() => onPressModal('', { id: '' })}
         imagePreview={imagePreview}
         handleSubmit={handleSubmit}
         register={register}

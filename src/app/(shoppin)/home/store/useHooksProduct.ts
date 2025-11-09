@@ -1,7 +1,8 @@
-import { useDeleteProduct, usePostProduct } from "@/hooks/product";
+import { useDeleteProduct, useGetDetailProduct, usePostProduct, usePutProduct } from "@/hooks/product";
 import { schemaProduct } from "@/schemas/schemaProduct";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { IProductStateProps, ParamsType } from "@/types/product";
+import { urlToFile } from "@/utils/helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,46 +14,52 @@ import { getProductThunk } from "./productThunk";
 
 export const useHooksProduct = () => {
     const { state, postProductService } = usePostProduct();
+    const { state: statePutProduct, putProduct } = usePutProduct()
     const { state: stateDeleteProduct, deleteProduct } = useDeleteProduct()
-    const products = useAppSelector((state) => state.product, shallowEqual);
-    const dispatch = useAppDispatch()
-    const searchParams = useSearchParams();
-    const page = Number(searchParams.get('page')) || 1;
-    const keyword = searchParams.get('keyword') || '';
-    const route = useRouter();
-
-
+    const { state: stateGetProductDetail, getDetailProduct } = useGetDetailProduct()
     const {
         handleSubmit,
         register,
         control,
         reset,
         watch,
+        setValue,
+        getValues,
         formState: { errors, isLoading },
     } = useForm({
         mode: 'onChange',
         resolver: yupResolver(schemaProduct),
     });
 
+    const products = useAppSelector((state) => state.product, shallowEqual);
+    const dispatch = useAppDispatch()
+    const searchParams = useSearchParams();
+    const page = Number(searchParams.get('page')) || 1;
+    const keyword = searchParams.get('keyword') || '';
+    const route = useRouter();
     const search = watch('search')
     const { pagination, product } = products;
     const [modal, setModal] = useState<IModalDataProps>({
         type: '',
         visible: false,
-        data: {},
+        data: {
+            id: ''
+        },
     });
     const [isDropdown, setIsDropdown] = useState<IDropdown>({
+        active: false,
         id: ''
     })
     const [isOpenModalAlert, setIsOpenModalAlert] = useState<boolean>(false)
 
+    const [imagePreview, setImagePreview] = useState<string | null>('');
 
-    const toggleSetModal = (type: string, data: IModalDataProps) => {
+    const toggleSetModal = (type: Modaltype, data: Datatypes) => {
         setModal((prevState) => ({
             ...prevState,
-            type: type,
+            type,
             visible: !prevState.visible,
-            data: data,
+            data: { id: data?.id }
         }));
     }
 
@@ -107,37 +114,60 @@ export const useHooksProduct = () => {
 
 
     const submitForm = async (data: IProductStateProps) => {
-        const {
-            name,
-            description,
-            productImage,
-            purchasePrice,
-            sellingPrice,
-            stock,
-        } = data;
 
-        let formData = new FormData();
-        formData.append('name', name);
-        formData.append('description', description);
-        formData.append('productImage', productImage as File);
-        formData.append('purchasePrice', purchasePrice.toString());
-        formData.append('sellingPrice', sellingPrice.toString());
-        formData.append('stock', stock.toString());
-        let result = await postProductService(formData);
+
+        let submitFunction = modal?.type === 'add-product' ? await postProductService(data) : await putProduct(modal?.data?.id as string, data)
+        let result = submitFunction
         if (result?.meta?.success) {
+
             setModal((prevState) => ({
                 ...prevState,
-                type: 'add-product',
+                type: '',
                 visible: !prevState.visible,
-                data: data,
+                data: {
+                    id: ''
+                },
             }));
             fetchData();
-            reset()
+            reset({})
+            setImagePreview('')
         }
 
     }
 
+    useEffect(() => {
+        if (modal?.data?.id && modal?.type === 'update-product') {
+            getDetailProduct(modal?.data?.id as string)
+        } else {
+            reset({})
+            setImagePreview('')
+        }
+
+    }, [modal?.type, modal?.data?.id])
+
+    useEffect(() => {
+        if (stateGetProductDetail?.data) {
+            const { name, description, purchasePrice, sellingPrice, stock, image } = stateGetProductDetail?.data
+
+            reset({
+                name,
+                description,
+                stock,
+                sellingPrice,
+                purchasePrice,
+            })
+            urlToFile(image, name).then((file) => {
+                setValue('productImage', file)
+            }).catch((error) => console.log('error', error))
+            setImagePreview(image as string)
+        }
+
+    }, [stateGetProductDetail?.data])
 
 
-    return { state, isOpenModalAlert, modal, pagination, control, product, isDropdown, formState: { errors, isLoading }, func: { postProductService, submitForm, toggleSetModal, fetchData, handleNext, handlePrev, handleSubmit, register, setIsDropdown, setIsOpenModalAlert, handleDelete } }
+
+
+
+
+    return { state, isOpenModalAlert, modal, pagination, control, product, isDropdown, formState: { errors, isLoading }, imagePreview, stateGetProductDetail, func: { postProductService, submitForm, toggleSetModal, fetchData, handleNext, handlePrev, handleSubmit, register, setIsDropdown, setIsOpenModalAlert, handleDelete, setImagePreview } }
 }
